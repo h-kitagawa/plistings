@@ -112,7 +112,7 @@ the first line of the listing is not rendered.
 下の行において，最初の「1」の場所がずれてしまうのは半ば仕方がないとも言える．
 1行目では，「1234567890」が前後・文字間に計11箇所の等量の空白を入れて10全角の領域に
 出力されているのに対し，2,~3行目では「1」が全角幅に左右中央で出力されているからである．
-\begin{lstlisting}[escapechar=\%, basewidth=1em, basicstyle=\tt]
+\begin{lstlisting}[basewidth=1em, basicstyle=\tt]
 1234567890
 1あ，23
 1あ2，3
@@ -121,7 +121,7 @@ the first line of the listing is not rendered.
 
 \texttt{doubleletterspace}オプションを指定すると，出力単位中の文字と文字の間隔を2倍にするため，
 下の例の「1」のように，各文字の垂直位置が揃いやすくなる．
-\begin{lstlisting}[escapechar=\%,doubleletterspace, basewidth=1em, basicstyle=\tt]
+\begin{lstlisting}[doubleletterspace, basewidth=1em, basicstyle=\tt]
 1234567890
 1あ，23
 1あ2，3
@@ -159,9 +159,11 @@ foo \lstinline[basicstyle=\tt\gtfamily]!あexit 0; #shbar! baz あ
 \textbf{escape to \LaTeX}
 
 あおいうえお
+%\tracingall
 \begin{lstlisting}[commentstyle=\color{green}\bfseries,
   frame=single,language=TeX, escapechar=!]
 ABCXYZあい!\color{blue}あ$a_{ijk}\times\hbox{ほげ}$いうえ!うえ% あいうえおAIg
+あいうえお!\c 西暦\today\c 和暦\today!abcdef
 \end{lstlisting}
 あいうえお
 \end{document}

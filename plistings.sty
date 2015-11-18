@@ -269,7 +269,6 @@
    \fi}
 
 %%%%%%%%%%%%%%%% escape to \LaTeX
-\newtoks\ltj@lst@escapecontents
 \lstloadaspects{escape}
 \gdef\lst@Escape#1#2#3#4{%
     \lst@CArgX #1\relax\lst@CDefX
@@ -289,11 +288,36 @@
                  {\lst@escapeend #4\lst@LeaveAllModes\lst@ReenterModes
                   \lst@newlines\z@ \lst@whitespacefalse}%
                  {}%
-         \fi
-         #3\catcode`\^^@=9\lst@escapebegin%
+         \fi%\tracingall
+         \ltj@lst@escape@setup#2
+         #3\catcode`\^^@=9\lst@escapebegin\expandafter\lst@next%
          \fi}%
-        {}}
+	 {}}
+\def\ltj@lst@escape@setup#1{%
+  \begingroup\lccode`\~=`#1\lowercase{%
+  \gdef\lst@next##1~{%
+     \scantokens{##1}%
+     %\ltj@lst@remove@jacmd{##1}%
+     %\typeout{<<\meaning\lst@arg>>}%
+     %\expandafter\expandafter\expandafter\scantokens\expandafter{##1}%
+     ~}%
+  }\endgroup
+}
 
+\gdef\ltj@lst@remove@jacmd#1{%
+  \let\lst@arg\@empty
+  \ltj@lst@remove@jacmd@#1 \@empty
+  \tracingonline0
+}
+\begingroup
+  \lccode`\~=`\^^@
+  \lowercase{%
+  \gdef\ltj@lst@remove@jacmd@#1 #2{%
+    \ifx#2\@empty\else
+      \ifx#1~\else\lst@lExtend\lst@arg{#1}\fi
+      \expandafter\ltj@lst@remove@jacmd@
+    \fi}}
+\endgroup
 
 %%%%%%%%%%%%%%%%
 \lstloadaspects{writefile}
