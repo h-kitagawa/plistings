@@ -1,4 +1,4 @@
-%#!ptex2pdf -l -e hk_listings.tex
+%#!ptex2pdf -l -e test1.tex
 \documentclass{jarticle}
 
 \usepackage{amsmath}
@@ -155,9 +155,13 @@ foo \lstinline[basicstyle=\tt\gtfamily]!あexit 0; #shbar! baz あ
 \colorbox{red}{\lstinline{aiu#sheoxyz}}
 \colorbox{red}{\lstinline{あいexit 0;#shうえお}}
 
+\bigskip
+\textbf{escape to \LaTeX}
+
 あおいうえお
-\begin{lstlisting}[frame=single]
-aiu
+\begin{lstlisting}[commentstyle=\color{green}\bfseries,
+  frame=single,language=TeX, escapechar=!]
+ABCXYZあい!\color{blue}あ$a_{ijk}\times\hbox{ほげ}$いうえ!うえ% あいうえおAIg
 \end{lstlisting}
 あいうえお
 \end{document}

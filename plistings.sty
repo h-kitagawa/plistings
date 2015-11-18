@@ -5,7 +5,7 @@
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{plistings}[2015/11/16 Japanese support of listings package]
-\RequirePackage{listings}
+\RequirePackage{listings,etoolbox}
 
 %%%%%%%%%%%%%%%% Japanese support
 %% whether letter-space in a fixed mode box is doubled or not
@@ -111,12 +111,18 @@
     \edef\lst@temp{|end[\lstenv@name]}%\tracingonline1\tracingmacros2%
     \expandafter\expandafter\expandafter\lst@InsideConvert%
         \expandafter{\lst@temp}%
-    \expandafter\expandafter\expandafter\@temptokena\expandafter{\lst@arg}%
-    \expandafter\def\expandafter\lst@temp\expandafter##\expandafter1\lst@arg
+    \@temptokena{%
+        \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+        \lst@SkipToFirst\expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
+    }
+    \expandafter\expandafter\expandafter\toks@\expandafter{\lst@arg}
+    \expandafter\edef\expandafter\lst@temp\expandafter##\expandafter1\lst@arg
     {%
-        \let\lst@arg\@empty\lst@InsideConvert{##1}\lstenv@ProcessJ@
+        \noexpand\let\noexpand\lst@arg\noexpand\@empty%
+        \noexpand\lst@InsideConvert{\noexpand##1}
+        \the\@temptokena\the\toks@
     }%
-   \lst@temp}
+    \lst@temp}
 }\endgroup
 
 % We redefine \lst@BeginDropInput, since now we have
@@ -137,7 +143,11 @@
 
 
 % hook!
-\lst@AddToHook{Init}{%
+\begingroup\catcode`\^^@=\active
+\lst@AddTo\lst@SelectStdCharTable{\def^^@{\ltj@lst@ProcessJALetter}}
+\endgroup
+\lst@AddToHook{InitVars}{%
+  \catcode`\^^@=\active
   \if@ltj@lst@double
     \let\ltj@lst@hss=\ltj@lst@hss@double
   \else
@@ -149,21 +159,19 @@
 \def\ltj@lst@MakeActive#1{%
     \let\lst@temp\@empty \ltj@lst@MakeActive@#1\relax}
 \begingroup
-\catcode`\^^A=12
+\catcode`\^^A=\active
 \catcode`\^^@=\active
 \lowercase{%
 \gdef\ltj@lst@MakeActive@#1{\let\lst@next\relax%
     \ifx#1\relax
     \else\let\lst@next\ltj@lst@MakeActive@
     \ifnum`#1>255
-      \lst@lAddTo\lst@temp{\ltj@lst@ProcessJALetter#1}%
+      \lst@lAddTo\lst@temp{^^@#1}%
     \else
-      \lccode`\^^@=`#1 
-      \lowercase{\lst@lAddTo\lst@temp{^^@}}%
+      \lccode`\^^A=`#1 
+      \lowercase{\lst@lAddTo\lst@temp{^^A}}%
     \fi\fi\lst@next}}
 \endgroup
-
-
 \begingroup \lccode`\~=`\ \relax \lowercase{%
 \gdef\lst@InsideConvert@#1 #2{%
     \ltj@lst@MakeActive{#1}%
@@ -261,6 +269,7 @@
    \fi}
 
 %%%%%%%%%%%%%%%% escape to \LaTeX
+\newtoks\ltj@lst@escapecontents
 \lstloadaspects{escape}
 \gdef\lst@Escape#1#2#3#4{%
     \lst@CArgX #1\relax\lst@CDefX
@@ -281,9 +290,10 @@
                   \lst@newlines\z@ \lst@whitespacefalse}%
                  {}%
          \fi
-         #3\lst@escapebegin%"
+         #3\catcode`\^^@=9\lst@escapebegin%
          \fi}%
         {}}
+
 
 %%%%%%%%%%%%%%%%
 \lstloadaspects{writefile}
@@ -309,5 +319,4 @@
         \@gobbletwo\fi\fi
     \fi}
 \endgroup
-
 \endinput
