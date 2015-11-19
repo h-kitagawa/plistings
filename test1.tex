@@ -1,5 +1,5 @@
-%#!ptex2pdf -l -e test1.tex
-\documentclass{jarticle}
+%#!ptex2pdf -l -e -u test1.tex
+\documentclass{ujarticle}
 
 \usepackage{amsmath}
 \usepackage{plistings,color,showexpl,comment}
@@ -163,7 +163,7 @@ foo \lstinline[basicstyle=\tt\gtfamily]!あexit 0; #shbar! baz あ
 \begin{lstlisting}[commentstyle=\color{green}\bfseries,
   frame=single,language=TeX, escapechar=!]
 ABCXYZあい!\color{blue}あ$a_{ijk}\times\hbox{ほげ}$いうえ!うえ% あいうえおAIg
-あいうえお!\c 西暦\today\c 和暦\today!abcdef
+あいうえお!\西暦\today\和暦\today!abcdef
 \end{lstlisting}
 あいうえお
 \end{document}

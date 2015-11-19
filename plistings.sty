@@ -290,33 +290,29 @@
                  {}%
          \fi%\tracingall
          \ltj@lst@escape@setup#2
-         #3\catcode`\^^@=9\lst@escapebegin\expandafter\lst@next%
+         #3\lst@escapebegin\expandafter\lst@next%
          \fi}%
 	 {}}
 \def\ltj@lst@escape@setup#1{%
   \begingroup\lccode`\~=`#1\lowercase{%
   \gdef\lst@next##1~{%
-     \scantokens{##1}%
-     %\ltj@lst@remove@jacmd{##1}%
-     %\typeout{<<\meaning\lst@arg>>}%
-     %\expandafter\expandafter\expandafter\scantokens\expandafter{##1}%
+     \let\lst@arg\@empty\ltj@lst@remove@jacmd{##1}%
+     \typeout{<<\meaning\lst@arg>>}%
+     \expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
      ~}%
   }\endgroup
 }
 
-\gdef\ltj@lst@remove@jacmd#1{%
-  \let\lst@arg\@empty
-  \ltj@lst@remove@jacmd@#1 \@empty
-  \tracingonline0
-}
 \begingroup
-  \lccode`\~=`\^^@
-  \lowercase{%
-  \gdef\ltj@lst@remove@jacmd@#1 #2{%
-    \ifx#2\@empty\else
-      \ifx#1~\else\lst@lExtend\lst@arg{#1}\fi
-      \expandafter\ltj@lst@remove@jacmd@
-    \fi}}
+  \catcode`\^^@=12 %
+  \gdef\ltj@lst@remove@jacmd#1{%
+    \expandafter\ltj@lst@remove@jacmd@\detokenize{#1}^^@\@nil^^@}
+  \gdef\ltj@lst@remove@jacmd@#1^^@{%
+    \ifx#1\@nil\else
+       \typeout{<<\string#1>>}%
+       \lst@lAddTo\lst@arg{#1}%
+       \expandafter\ltj@lst@remove@jacmd@
+    \fi}
 \endgroup
 
 %%%%%%%%%%%%%%%%
