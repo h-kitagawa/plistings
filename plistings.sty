@@ -4,10 +4,10 @@
 % lltjp-listings.sty ベース，コード未整理
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{plistings}[2015/11/19 Japanese support of listings package]
+\ProvidesPackage{plistings}[2015/12/07 v0.10 Japanese support of listings package]
 \RequirePackage{listings,etoolbox}
 
-%%%%%%%%%%%%%%%% Japanese support
+%%%%%%%% Japanese support
 %% whether letter-space in a fixed mode box is doubled or not
 \newif\if@ltj@lst@double
 \lst@Key{doubleletterspace}f[t]{\lstKV@SetIf{#1}\if@ltj@lst@double}
@@ -17,7 +17,7 @@
   \ifx\@empty#1\else\ltj@lst@hss#1\expandafter\lst@FillFixed@\fi}
 \def\ltj@lst@hss@double{\lst@hss\lst@hss}
 
-% lowest level
+% 最下層の処理
 \newif\if@ltj@lst@kanji
 \lst@AddToHook{InitVars}{\@ltj@lst@kanjifalse}
 
@@ -51,7 +51,8 @@
 \def\ltj@lst@setcloseflag{%
   \lst@ifletter\else\lst@lettertrue\fi\@ltj@lst@kanjitrue}
 
-% Processing Japanese characters
+%%%% 和文文字の出力命令．
+%%%% 和文文字の前にこれが前置されることになる．
 \def\ltj@lst@ProcessJALetter#1{%
   \lst@whitespacefalse
   \ifnum`#1>255
@@ -70,92 +71,8 @@
   \lst@Append#1}
 
 
-% redefine \lstinline and its inner commands to support Japanese characters
-\renewcommand\lstinline[1][]{%
-    \leavevmode\bgroup % \hbox\bgroup --> \bgroup
-      \def\lst@boxpos{b}%
-      \lsthk@PreSet\lstset{flexiblecolumns,#1}%
-      \lsthk@TextStyle
-      \@ifnextchar\bgroup \ltj@lst@InlineG \ltj@lstinline@}
-\def\ltj@lstinline@#1{%
-  \edef\ltj@lst@temp{\the\catcode`#1}\lst@Init\relax\catcode`#1\ltj@lst@temp
-  \lst@Def{13}{\lst@DeInit\egroup \global\let\lst@inlinechars\@empty
-     \PackageError{Listings}{lstinline ended by EOL}\@ehc}%
-  \lst@InlineJ#1}
-\def\ltj@lst@InlineG{%
-  \lst@Init\relax\edef\ltj@lst@temp{\the\catcode`\}}%
-  \catcode`\}=2 \catcode`\ =12\relax
-  \lst@Def{13}{\lst@DeInit\egroup \global\let\lst@inlinechars\@empty
-     \PackageError{Listings}{lstinline ended by EOL}\@ehc}%
-  \let\lst@arg\@empty\afterassignment\ltj@lst@InlineG@@\@temptokena}
-\def\ltj@lst@InlineG@@{%
-  \catcode`\}=\ltj@lst@temp
-  \expandafter\expandafter\expandafter\lst@InsideConvert%
-  \expandafter{\the\@temptokena}\lst@arg\lst@DeInit\egroup}
-
-% redefine \lstenv@process
-\begingroup \lccode`\~=`\^^M\lowercase{%
-\gdef\lstenv@Process#1{%
-    \ifx~#1%
-        \lstenv@DroppedWarning \let\lst@next\ltj@lstenv@ProcessM
-    \else\ifx^^J#1%
-        \lstenv@DroppedWarning \let\lst@next\lstenv@ProcessJ
-    \else
-        \let\lst@dropped#1\let\lst@next\lstenv@Process
-    \fi \fi
-    \lst@next}
-}\endgroup
-\begingroup\lccode`\[=`\{\lccode`\]=`\}\lccode`|=`\\\lowercase{%
-\gdef\ltj@lstenv@ProcessM{%
-    \let\lst@arg\@empty
-    \edef\lst@temp{|end[\lstenv@name]}%\tracingonline1\tracingmacros2%
-    \expandafter\expandafter\expandafter\lst@InsideConvert%
-        \expandafter{\lst@temp}%
-    \@temptokena{%
-        \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
-        \lst@SkipToFirst\expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
-    }
-    \expandafter\expandafter\expandafter\toks@\expandafter{\lst@arg}
-    \expandafter\edef\expandafter\lst@temp\expandafter##\expandafter1\lst@arg
-    {%
-        \noexpand\let\noexpand\lst@arg\noexpand\@empty%
-        \noexpand\lst@InsideConvert{\noexpand##1}
-        \the\@temptokena\the\toks@
-    }%
-    \lst@temp}
-}\endgroup
-
-% We redefine \lst@BeginDropInput, since now we have
-% two additional `process macros'.
-\def\lst@BeginDropInput#1{%
-    \lst@EnterMode{#1}%
-    {\lst@modetrue
-     \let\lst@OutputBox\@gobble
-     \let\lst@ifdropinput\iftrue
-     \let\lst@ProcessLetter\@gobble
-     \let\lst@ProcessDigit\@gobble
-     \let\lst@ProcessOther\@gobble
-     \let\lst@ProcessSpace\@empty
-     \let\lst@ProcessTabulator\@empty
-     \let\lst@ProcessFormFeed\@empty
-     \let\ltj@lst@ProcessJALetter\@gobble     % added
-}}
-
-
-% hook!
-\begingroup\catcode`\^^@=\active
-\lst@AddTo\lst@SelectStdCharTable{\def^^@{\ltj@lst@ProcessJALetter}}
-\endgroup
-\lst@AddToHook{InitVars}{%
-  \catcode`\^^@=\active
-  \if@ltj@lst@double
-    \let\ltj@lst@hss=\ltj@lst@hss@double
-  \else
-    \let\ltj@lst@hss=\lst@hss
-  \fi
-}
-
-% lstConvert
+%%%% \lst@InsideConvert の処理内容変更
+%%%% active 文字化に加え，^^@ を和文文字の前に前置
 \def\ltj@lst@MakeActive#1{%
     \let\lst@temp\@empty \ltj@lst@MakeActive@#1\relax}
 \begingroup
@@ -183,7 +100,94 @@
     \fi #2}
 }\endgroup
 
-% 白線対策
+
+%%%%%%%% \lstinline の再定義．
+%%%% 引数を全部読み込み，\lst@InsideConvert で変換
+\renewcommand\lstinline[1][]{%
+    \leavevmode\bgroup % \hbox\bgroup --> \bgroup
+      \def\lst@boxpos{b}%
+      \lsthk@PreSet\lstset{flexiblecolumns,#1}%
+      \lsthk@TextStyle
+      \@ifnextchar\bgroup \ltj@lst@InlineG \ltj@lstinline@}
+\def\ltj@lstinline@#1{%
+  \edef\ltj@lst@temp{\the\catcode`#1}\lst@Init\relax\catcode`#1\ltj@lst@temp
+  \lst@Def{13}{\lst@DeInit\egroup \global\let\lst@inlinechars\@empty
+     \PackageError{Listings}{lstinline ended by EOL}\@ehc}%
+  \lst@InlineJ#1}
+\def\ltj@lst@InlineG{%
+  \lst@Init\relax\edef\ltj@lst@temp{\the\catcode`\}}%
+  \catcode`\}=2 \catcode`\ =12\relax
+  \lst@Def{13}{\lst@DeInit\egroup \global\let\lst@inlinechars\@empty
+     \PackageError{Listings}{lstinline ended by EOL}\@ehc}%
+  \let\lst@arg\@empty\afterassignment\ltj@lst@InlineG@@\@temptokena}
+\def\ltj@lst@InlineG@@{%
+  \catcode`\}=\ltj@lst@temp
+  \expandafter\expandafter\expandafter\lst@InsideConvert%
+  \expandafter{\the\@temptokena}\lst@arg\lst@DeInit\egroup}
+
+%%%%%%%% \lstenv@process の再定義
+%%%% 基本的にはインライン時と同様に全トークンを読み込み→\lst@InsideConvert で変換
+%%%% その後，変換した中身は \scantokens で読み込み直される
+\begingroup \lccode`\~=`\^^M\lowercase{%
+\gdef\lstenv@Process#1{%
+    \ifx~#1%
+        \lstenv@DroppedWarning \let\lst@next\ltj@lstenv@ProcessM
+    \else\ifx^^J#1%
+        \lstenv@DroppedWarning \let\lst@next\lstenv@ProcessJ
+    \else
+        \let\lst@dropped#1\let\lst@next\lstenv@Process
+    \fi \fi
+    \lst@next}
+}\endgroup
+\begingroup\lccode`\[=`\{\lccode`\]=`\}\lccode`|=`\\\lowercase{%
+\gdef\ltj@lstenv@ProcessM{%
+    \let\lst@arg\@empty
+    \edef\lst@temp{|end[\lstenv@name]}%
+    \expandafter\expandafter\expandafter\lst@InsideConvert%
+        \expandafter{\lst@temp}%
+    \@temptokena{%
+        \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+        \lst@SkipToFirst\expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
+    }
+    \expandafter\expandafter\expandafter\toks@\expandafter{\lst@arg}
+    \expandafter\edef\expandafter\lst@temp\expandafter##\expandafter1\lst@arg
+    {%
+        \noexpand\let\noexpand\lst@arg\noexpand\@empty%
+        \noexpand\lst@InsideConvert{\noexpand##1}
+        \the\@temptokena\the\toks@
+    }%
+    \lst@temp}
+}\endgroup
+
+\def\lst@BeginDropInput#1{%
+    \lst@EnterMode{#1}%
+    {\lst@modetrue
+     \let\lst@OutputBox\@gobble
+     \let\lst@ifdropinput\iftrue
+     \let\lst@ProcessLetter\@gobble
+     \let\lst@ProcessDigit\@gobble
+     \let\lst@ProcessOther\@gobble
+     \let\lst@ProcessSpace\@empty
+     \let\lst@ProcessTabulator\@empty
+     \let\lst@ProcessFormFeed\@empty
+     \let\ltj@lst@ProcessJALetter\@gobble     % added
+}}
+
+
+%%%% ^^@ を active 文字化 (\ltj@lst@ProcessJALetter)
+\begingroup\catcode`\^^@=\active
+\lst@AddTo\lst@SelectStdCharTable{\def^^@{\ltj@lst@ProcessJALetter}}
+\endgroup
+\lst@AddToHook{InitVars}{%
+  \catcode`\^^@=\active
+  \if@ltj@lst@double
+    \let\ltj@lst@hss=\ltj@lst@hss@double
+  \else
+    \let\ltj@lst@hss=\lst@hss
+  \fi
+}
+
+%%%% 白線対策のため，\lineskiplimit を負の値にする
 \newif\ifltj@lst@frame@top
 \newdimen\ltj@lst@frame@lslimit
 \gdef\lst@frameInit{%
@@ -268,7 +272,9 @@
       \expandafter\lst@get@filecontents@loop
    \fi}
 
-%%%%%%%%%%%%%%%% escape to \LaTeX
+%%%%%%%% escape to \LaTeX
+%%%% 一旦中身を全部取得した後で，^^@ ( = \ltj@lst@ProcessJALetter) を
+%%%% トークン列から削除，その後 \scantokens で再読み込み
 \lstloadaspects{escape}
 \gdef\lst@Escape#1#2#3#4{%
     \lst@CArgX #1\relax\lst@CDefX
@@ -288,7 +294,7 @@
                  {\lst@escapeend #4\lst@LeaveAllModes\lst@ReenterModes
                   \lst@newlines\z@ \lst@whitespacefalse}%
                  {}%
-         \fi%\tracingall
+         \fi%
          \ltj@lst@escape@setup#2
          #3\lst@escapebegin\expandafter\lst@next%
          \fi}%
@@ -297,7 +303,6 @@
   \begingroup\lccode`\~=`#1\lowercase{%
   \gdef\lst@next##1~{%
      \let\lst@arg\@empty\ltj@lst@remove@jacmd{##1}%
-     \typeout{<<\meaning\lst@arg>>}%
      \expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
      ~}%
   }\endgroup
@@ -309,34 +314,9 @@
     \expandafter\ltj@lst@remove@jacmd@\detokenize{#1}^^@\@nil^^@}
   \gdef\ltj@lst@remove@jacmd@#1^^@{%
     \ifx#1\@nil\else
-       \typeout{<<\string#1>>}%
        \lst@lAddTo\lst@arg{#1}%
        \expandafter\ltj@lst@remove@jacmd@
     \fi}
 \endgroup
 
-%%%%%%%%%%%%%%%%
-\lstloadaspects{writefile}
-\begingroup \catcode`\^^I=11
-\gdef\lst@WFBegin#1#2{%
-    \begingroup
-    \let\lst@OutputBox#1%
-    \def\lst@Append##1{%
-        \advance\lst@length\@ne
-        \expandafter\lst@token\expandafter{\the\lst@token##1}%
-        \ifx ##1\lst@outputspace \else
-            \lst@WFAppend##1%
-        \fi}%
-    \lst@lAddTo\lst@PreGotoTabStop{\lst@WFAppend{^^I}}%
-    \lst@lAddTo\lst@ProcessSpace{\lst@WFAppend{ }}%
-    \def\ltj@lst@ProcessIVS##1{\lst@whitespacefalse\lst@Append##1}%
-    \def\ltj@lst@ProcessVS##1{\lst@whitespacefalse\lst@Append##1}%
-    \let\lst@DeInit\lst@WFDeInit
-    \let\lst@MProcessListing\lst@WFMProcessListing
-    \lst@WFifopen\else
-        \immediate\openout\lst@WF=#2\relax
-        \global\let\lst@WFifopen\iftrue
-        \@gobbletwo\fi\fi
-    \fi}
-\endgroup
 \endinput
