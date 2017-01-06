@@ -1,8 +1,13 @@
 %#!ptex2pdf -l -e -u test1.tex
-\documentclass{ujarticle}
-
-\usepackage{amsmath}
-\usepackage{plistings,color,showexpl,comment}
+\ifdefined\directlua
+  \documentclass{ltjarticle}
+  \usepackage{listings,xcolor}
+\else
+  \documentclass[dvipdfmx]{ujarticle}
+  \usepackage{plistings,xcolor}
+  \def\zw{zw}
+\fi
+\usepackage{amsmath,showexpl,comment}
 \usepackage
 [
 	papersize={100mm,100mm},
@@ -17,7 +22,7 @@
 	backgroundcolor=\color[gray]{.75},
 	breaklines=true,
         explpreset={columns=fixed},
-        basewidth={0.5zw, 0.45em},
+        basewidth={0.5\zw, 0.45em},
 	numbers=left,numberstyle=\tiny, numbersep=2pt,
 }
 

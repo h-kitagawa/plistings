@@ -1,6 +1,13 @@
 %#!ptex2pdf -l -e test2.tex
-\documentclass{jsarticle}
-\usepackage{plistings,lmodern}
+\ifdefined\directlua
+  \documentclass{ltjsarticle}
+  \usepackage{listings,xcolor}
+\else
+  \documentclass[uplatex,dvipdfmx]{jsarticle}
+  \usepackage{plistings,xcolor}
+  \def\zw{zw}
+\fi
+\usepackage{lmodern}
 \usepackage{showexpl}
 \lstset{
   language=C, frame=trbl, framesep=5pt,
@@ -8,7 +15,6 @@
   basicstyle=\ttfamily, basewidth=0.5em,
   keywordstyle=\bfseries\color{blue},
 }
-\usepackage[dvipdfmx]{xcolor}
 \begin{document}
 \begin{lstlisting}
 #define N 6
