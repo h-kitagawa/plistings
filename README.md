@@ -5,6 +5,8 @@
 [LuaTeX-ja](https://osdn.jp/projects/luatex-ja/wiki/FrontPage) 中の `lltjp-listings.sty` を
 ベースとしている．
 
+ライセンスは今まで明記していなかったが，MIT License とした (2010-10-11)．
+
 ## 注意点（と，現在の制約）
 
 * 実行には e-TeX 拡張が必要である（`\scantokens`, `\detokenize` 利用のため）．
