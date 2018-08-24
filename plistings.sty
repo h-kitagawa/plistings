@@ -323,4 +323,11 @@
     \fi}
 \endgroup
 
+%%%%%%%%%%%%%%%% texcl
+\lst@AddToHook{AfterBeginComment}
+   {\ifnum\lst@mode=\lst@TeXLmode
+      \catcode`\^^M=13\relax
+      \catcode`\^^@=9\relax
+    \fi}
+
 \endinput
