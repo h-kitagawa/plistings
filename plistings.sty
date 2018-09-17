@@ -299,15 +299,17 @@
                   \lst@newlines\z@ \lst@whitespacefalse}%
                  {}%
          \fi%
-         \ltj@lst@escape@setup#2
+         \ltj@lst@escape@setup#2%
          #3\lst@escapebegin\expandafter\lst@next%
          \fi}%
 	 {}}
-\def\ltj@lst@escape@setup#1{%
+\gdef\ltj@empty@grp{{}}
+\gdef\ltj@lst@escape@setup#1{%
   \begingroup\lccode`\~=`#1\lowercase{%
   \gdef\lst@next##1~{%
      \let\lst@arg\@empty\ltj@lst@remove@jacmd{##1}%
-     \expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
+     \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+	 \scantokens\expandafter\expandafter\expandafter{\expandafter\ltj@empty@grp\lst@arg\empty}%
      ~}%
   }\endgroup
 }

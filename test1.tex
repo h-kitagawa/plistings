@@ -159,6 +159,7 @@ foo \lstinline[basicstyle=\tt\gtfamily]!あexit 0; #shbar! baz あ
 
 \colorbox{red}{\lstinline{aiu#sheoxyz}}
 \colorbox{red}{\lstinline{あいexit 0;#shうえお}}
+\newpage
 
 \bigskip
 \textbf{escape to \LaTeX}
@@ -166,9 +167,13 @@ foo \lstinline[basicstyle=\tt\gtfamily]!あexit 0; #shbar! baz あ
 あおいうえお
 %\tracingall
 \begin{lstlisting}[commentstyle=\color{green}\bfseries,
-  frame=single,language=TeX, escapechar=!]
-ABCXYZあい!\color{blue}あ$a_{ijk}\times\hbox{ほげ}$いうえ!うえ% あいうえおAIg
-あいうえお!\西暦\today\和暦\today!abcdef
+  frame=single,language=TeX, escapechar=!, basicstyle=\ttfamily,
+  basewidth={0.5em, 0.5em}]
+1234567890123457890
+ai! u e !o
+aiu! \textcolor{blue}{e}!o!\textcolor{blue}{e} !o
+ABあ!\color{blue}あ$a_{ijk}\times\hbox{ほげ}$いうえ!うえ% あいうえおAIg
+あ!\西暦\today\和暦\today!abc
 \end{lstlisting}
 あいうえお
 \end{document}
