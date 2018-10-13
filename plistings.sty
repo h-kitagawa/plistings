@@ -4,7 +4,7 @@
 % lltjp-listings.sty ベース，コード未整理
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{plistings}[2015/12/07 v0.10 Japanese support of listings package]
+\ProvidesPackage{plistings}[2015/10/13 v0.11 Japanese support of listings package]
 
 %%%%%%%% Package options
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{listings}}
@@ -331,5 +331,16 @@
       \catcode`\^^M=13\relax
       \catcode`\^^@=9\relax
     \fi}
+
+
+%%%%%%%%%%%%%%%% \lstMakeShortInline
+\let\ltj@lstMakeShortInline@\lstMakeShortInline@
+\patchcmd\lstMakeShortInline{\lst@inline[#1]}{\ltj@lstinline@short[#1]}{}{}
+\patchcmd\lstMakeShortInline@{\lst@shortinlinedef#1}{\lst@shortinlinedef~}{}{}
+\gdef\ltj@lstinline@short[#1]{%
+    \leavevmode\bgroup % \hbox\bgroup --> \bgroup
+      \def\lst@boxpos{b}%
+      \lsthk@PreSet\lstset{flexiblecolumns,#1}%
+      \lsthk@TextStyle\lst@InlineJ}
 
 \endinput
