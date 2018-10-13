@@ -334,13 +334,6 @@
 
 
 %%%%%%%%%%%%%%%% \lstMakeShortInline
-\let\ltj@lstMakeShortInline@\lstMakeShortInline@
-\patchcmd\lstMakeShortInline{\lst@inline[#1]}{\ltj@lstinline@short[#1]}{}{}
 \patchcmd\lstMakeShortInline@{\lst@shortinlinedef#1}{\lst@shortinlinedef~}{}{}
-\gdef\ltj@lstinline@short[#1]{%
-    \leavevmode\bgroup % \hbox\bgroup --> \bgroup
-      \def\lst@boxpos{b}%
-      \lsthk@PreSet\lstset{flexiblecolumns,#1}%
-      \lsthk@TextStyle\lst@InlineJ}
 
 \endinput
