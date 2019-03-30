@@ -49,6 +49,11 @@ int pos_history[(N*N)<<2];
  \par{\ttfamily\meaning\西暦}
  a\NUL a^^@a
 \end{LTXexample}}
-なお，\lstinline|^^@|~(\lstinline|\0|) を陽にソース中に書いた場合は
+なお，\lstinline|^^@あ|~(\lstinline|\0|) を陽にソース中に書いた場合は
 エラーが発生する．
+
+\lstMakeShortInline[language=TeX]|
+\typeout{DEBUG-1: \meaning|}
+This is a test. |aあ\par|あああ
+The second sentence.
 \end{document}
