@@ -158,7 +158,10 @@
     {%
         \noexpand\let\noexpand\lst@arg\noexpand\@empty%
         \noexpand\lst@InsideConvert{\noexpand##1}
-        \the\@temptokena\the\toks@
+        \the\@temptokena
+        \noexpand\ifnum\noexpand\catcode92=\noexpand\z@
+          \noexpand\end{\lstenv@name}%
+        \noexpand\else\the\toks@\noexpand\fi\tracingnone
     }%
     \lst@temp}
 }\endgroup
@@ -326,11 +329,16 @@
 \endgroup
 
 %%%%%%%%%%%%%%%% texcl
-\lst@AddToHook{AfterBeginComment}
-   {\ifnum\lst@mode=\lst@TeXLmode
-      \catcode`\^^M=13\relax
-      \catcode`\^^@=9\relax
-    \fi}
+{\lccode`\~=`\%\lccode`\|=`\^^M \catcode`\|=13\relax
+  \lowercase{%
+	\gdef\plst@texcl@comment#1|{}%
+	\gdef\plst@texcl@setchar{\catcode`\%=\active \let~\plst@texcl@comment}%
+  }%
+}
+\lst@AddToHook{AfterBeginComment}{
+  \ifnum\lst@mode=\lst@TeXLmode
+    \catcode`\^^M=13\relax \catcode`\^^@=9\relax\plst@texcl@setchar
+  \fi}
 
 
 %%%%%%%%%%%%%%%% \lstMakeShortInline
