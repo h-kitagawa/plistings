@@ -4,7 +4,7 @@
 % lltjp-listings.sty ベース，コード未整理
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{plistings}[2019/03/31 v0.12 Japanese support of listings package]
+\ProvidesPackage{plistings}[2020-03-23 v0.13 Japanese support of listings package]
 
 %%%%%%%% Package options
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{listings}}
@@ -335,7 +335,7 @@
 	\gdef\plst@texcl@setchar{\catcode`\%=\active \let~\plst@texcl@comment}%
   }%
 }
-\lst@AddToHook{AfterBeginComment}{
+\lst@AddToHook{AfterBeginComment}{%
   \ifnum\lst@mode=\lst@TeXLmode
     \catcode`\^^M=13\relax \catcode`\^^@=9\relax\plst@texcl@setchar
   \fi}
