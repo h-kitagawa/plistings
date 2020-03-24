@@ -4,7 +4,7 @@
 % lltjp-listings.sty ベース，コード未整理
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{plistings}[2020-03-23 v0.13 Japanese support of listings package]
+\ProvidesPackage{plistings}[2020-03-24 v0.14 Japanese support of listings package]
 
 %%%%%%%% Package options
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{listings}}
@@ -20,6 +20,18 @@
 \def\lst@FillFixed@#1{%
   \ifx\@empty#1\else\ltj@lst@hss#1\expandafter\lst@FillFixed@\fi}
 \def\ltj@lst@hss@double{\lst@hss\lst@hss}
+\def\lst@FillFixed#1{{\null#1\null}\lst@FillFixed@}
+\def\lst@FillFixed@#1{%
+  \ifx\@empty#1\else\ltj@lst@hss{\null#1\null}\expandafter\lst@FillFixed@\fi}
+\let\lst@FillOutputBox\lst@FillFixed
+% [space/full]flexiblemode (not much useful...)
+\def\ltj@lst@FillFlex#1\@empty{\null#1\null}
+\patchcmd\lst@column@flexible
+  {\let\lst@FillOutputBox\@empty}{\let\lst@FillOutputBox\ltj@lst@FillFlex}{}{}
+\patchcmd\lst@column@fullflexible
+  {\let\lst@FillOutputBox\@empty}{\let\lst@FillOutputBox\ltj@lst@FillFlex}{}{}
+\patchcmd\lst@column@spaceflexible
+  {\let\lst@FillOutputBox\@empty}{\let\lst@FillOutputBox\ltj@lst@FillFlex}{}{}
 
 % 最下層の処理
 \newif\if@ltj@lst@kanji
@@ -68,7 +80,11 @@
       \else
         \ltj@lst@setkanjiflag % 通常の和文文字
     \fi\fi
-    \advance\lst@length\@ne   % 和文文字は通常の2倍の幅
+    \ifdefined\ucs
+      \ifodd \ifnum`#1<"FF65 1\else\ifnum`#1>"FF9F 1\else 0\fi\fi
+        \advance\lst@length\@ne   % 普通の和文文字は通常の2倍の幅
+      \fi
+    \fi
   \else
     \ltj@lst@setletterflag
   \fi

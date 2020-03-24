@@ -56,4 +56,56 @@ int pos_history[(N*N)<<2];
 \typeout{DEBUG-1: \meaning|}
 This is a test. |aあ\par|あああ
 The second sentence.
+
+\newpage
+ｱｲｳｴｵ
+\paragraph{0.75zw}\leavevmode\par
+\lstset{basewidth=0.75\zw,basicstyle=\ttfamily,doubleletterspace,backgroundcolor=}
+\noindent
+\def\A{\leavevmode\smash{\hbox to 0.75\zw{\kern-.0625mm\vrule height 0pt depth 200pt width 0.125mm\hss}}}%
+\textcolor{cyan}{\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A}%
+
+\begin{lstlisting}
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123（あいう@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あいう）@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あい：う@（ｶﾝｼﾞabc
+\end{lstlisting}
+
+\begin{lstlisting}[columns={[l]flexible}]
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123（あいう@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あいう）@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あい：う@（ｶﾝｼﾞabc
+\end{lstlisting}
+
+\paragraph{0.5zw}\leavevmode\par
+\lstset{basewidth=0.5\zw,basicstyle=\ttfamily,doubleletterspace,backgroundcolor=}
+\noindent
+\def\A{\leavevmode\smash{\hbox to 0.75\zw{\kern-.0625mm\vrule height 0pt depth 200pt width 0.125mm\hss}}}%
+\textcolor{cyan}{\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A}%
+
+\begin{lstlisting}
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123（あいう@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あいう）@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あい：う@（ｶﾝｼﾞabc
+\end{lstlisting}
+
+\begin{lstlisting}[columns={[l]flexible}]
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123（あいう@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あいう）@（ｶﾝｼﾞabc
+a.b.c.d.e.f.g.h.i.j.k.l.m.
+123あい：う@（ｶﾝｼﾞabc
+\end{lstlisting}
+
+
 \end{document}
