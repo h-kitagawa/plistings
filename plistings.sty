@@ -4,7 +4,7 @@
 % lltjp-listings.sty ベース，コード未整理
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{plistings}[2020-03-24 v0.14 Japanese support of listings package]
+\ProvidesPackage{plistings}[2025-03-25 v0.15 Japanese support of listings package]
 
 %%%%%%%% Package options
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{listings}}
@@ -169,7 +169,7 @@
         \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
         \lst@SkipToFirst\expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
     }
-    \expandafter\expandafter\expandafter\toks@\expandafter{\lst@arg}
+    \expandafter\expandafter\expandafter\toks@\expandafter{\lst@arg}%
     \expandafter\edef\expandafter\lst@temp\expandafter##\expandafter1\lst@arg
     {%
         \noexpand\let\noexpand\lst@arg\noexpand\@empty%
