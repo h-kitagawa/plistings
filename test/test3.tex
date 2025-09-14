@@ -1,0 +1,19 @@
+\ifdefined\directlua
+  \documentclass{ltjarticle}
+  \usepackage{listings}
+\else
+  \documentclass{article}
+  \usepackage{plistings}
+  \loggingall
+\fi
+\begin{document}
+\begin{lstlisting}[gobble=4,columns=fixed,basewidth=1em,basicstyle=\ttfamily]
+Hello, world!
+aあいう
+abえおか
+aきcdくけ
+abこdeさし
+\end{lstlisting}
+\end{document}
+
+

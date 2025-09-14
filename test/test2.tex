@@ -7,6 +7,7 @@
   \usepackage{plistings,xcolor}
   \def\zw{zw}
 \fi
+\loggingall
 \usepackage{lmodern}
 \usepackage{showexpl}
 \lstset{
@@ -48,7 +49,8 @@ int pos_history[(N*N)<<2];
  \西暦\today，\和暦\today
  \par{\ttfamily\meaning\西暦}
  a\NUL a^^@a
-\end{LTXexample}}
+\end{LTXexample}
+}
 なお，\lstinline|^^@あ|~(\lstinline|\0|) を陽にソース中に書いた場合は
 エラーが発生する．
 
@@ -86,7 +88,7 @@ a.b.c.d.e.f.g.h.i.j.k.l.m.
 \paragraph{0.5zw}\leavevmode\par
 \lstset{basewidth=0.5\zw,basicstyle=\ttfamily,doubleletterspace,backgroundcolor=}
 \noindent
-\def\A{\leavevmode\smash{\hbox to 0.75\zw{\kern-.0625mm\vrule height 0pt depth 200pt width 0.125mm\hss}}}%
+\def\A{\leavevmode\smash{\hbox to 0.5\zw{\kern-.0625mm\vrule height 0pt depth 200pt width 0.125mm\hss}}}%
 \textcolor{cyan}{\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A\A}%
 
 \begin{lstlisting}

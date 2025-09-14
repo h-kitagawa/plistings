@@ -4,7 +4,7 @@
 % lltjp-listings.sty ベース，コード未整理
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{plistings}[2025-03-25 v0.15 Japanese support of listings package]
+\ProvidesPackage{plistings}[2025-09-14 v0.16 Japanese support of listings package]
 
 %%%%%%%% Package options
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{listings}}
@@ -120,6 +120,28 @@
     \fi #2}
 }\endgroup
 
+\begingroup
+\lccode`\~=`\^^M
+\catcode`\^^A=\active
+\catcode`\^^@=\active
+\lowercase{%
+\gdef\ltj@lst@supply@jcmd#1{\@temptokena={}\toks@{#1}\ltj@lst@supply@jcmd@}
+\gdef\ltj@lst@supply@jcmd@#1{%
+  \ifx#1~
+    \edef\lst@next{\the\toks@\the\@temptokena\noexpand~}%
+  \else\let\lst@next\ltj@lst@supply@jcmd@
+    \ifx#1\empty
+      \edef\lst@next{\the\toks@\the\@temptokena\empty}%
+    \else\if\noexpand#1\relax
+      \@temptokena\expandafter{\the\@temptokena#1}%
+    \else\ifnum`#1>255
+      \@temptokena\expandafter{\the\@temptokena^^@#1}%
+    \else\ifnum`#1=`\^^@\else
+      \@temptokena\expandafter{\the\@temptokena#1}%
+    \fi\fi\fi\fi
+ \fi\lst@next}
+}
+\endgroup
 
 %%%%%%%% \lstinline の再定義．
 %%%% 引数を全部読み込み，\lst@InsideConvert で変換
@@ -146,41 +168,19 @@
   \expandafter{\the\@temptokena}\lst@arg\lst@DeInit\egroup}
 
 %%%%%%%% \lstenv@process の再定義
-%%%% 基本的にはインライン時と同様に全トークンを読み込み→\lst@InsideConvert で変換
-%%%% その後，変換した中身は \scantokens で読み込み直される
 \begingroup \lccode`\~=`\^^M\lowercase{%
 \gdef\lstenv@Process#1{%
     \ifx~#1%
-        \lstenv@DroppedWarning \let\lst@next\ltj@lstenv@ProcessM
+        \lstenv@DroppedWarning \def\lst@next{\ltj@lst@supply@jcmd\lst@SkipToFirst}
     \else\ifx^^J#1%
         \lstenv@DroppedWarning \let\lst@next\lstenv@ProcessJ
     \else
         \let\lst@dropped#1\let\lst@next\lstenv@Process
     \fi \fi
     \lst@next}
-}\endgroup
-\begingroup\lccode`\[=`\{\lccode`\]=`\}\lccode`|=`\\\lowercase{%
-\gdef\ltj@lstenv@ProcessM{%
-    \let\lst@arg\@empty
-    \edef\lst@temp{|end[\lstenv@name]}%
-    \expandafter\expandafter\expandafter\lst@InsideConvert%
-        \expandafter{\lst@temp}%
-    \@temptokena{%
-        \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
-        \lst@SkipToFirst\expandafter\expandafter\expandafter\scantokens\expandafter{\lst@arg}%
-    }
-    \expandafter\expandafter\expandafter\toks@\expandafter{\lst@arg}%
-    \expandafter\edef\expandafter\lst@temp\expandafter##\expandafter1\lst@arg
-    {%
-        \noexpand\let\noexpand\lst@arg\noexpand\@empty%
-        \noexpand\lst@InsideConvert{\noexpand##1}
-        \the\@temptokena
-        \noexpand\ifnum\noexpand\catcode92=\noexpand\z@
-          \noexpand\end{\lstenv@name}%
-        \noexpand\else\the\toks@\noexpand\fi\tracingnone
-    }%
-    \lst@temp}
-}\endgroup
+}%
+\gdef\ltj@lstenv@ProcessM{\ltj@lst@supply@jcmd\lst@SkipToFirst}
+\endgroup
 
 \def\lst@BeginDropInput#1{%
     \lst@EnterMode{#1}%
@@ -327,8 +327,7 @@
   \begingroup\lccode`\~=`#1\lowercase{%
   \gdef\lst@next##1~{%
      \let\lst@arg\@empty\ltj@lst@remove@jacmd{##1}%
-     \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
-	 \scantokens\expandafter\expandafter\expandafter{\expandafter\ltj@empty@grp\lst@arg\empty}%
+     \scantokens\expandafter{\lst@arg\noexpand}%
      ~}%
   }\endgroup
 }
@@ -356,8 +355,23 @@
     \catcode`\^^M=13\relax \catcode`\^^@=9\relax\plst@texcl@setchar
   \fi}
 
-
 %%%%%%%%%%%%%%%% \lstMakeShortInline
 \patchcmd\lstMakeShortInline@{\lst@shortinlinedef#1}{\lst@shortinlinedef~}{}{}
+
+\def\lst@MProcessListing{%
+  \lst@XPrintToken \lst@EOLUpdate \lsthk@InitVarsBOL
+  \global\advance\lst@lineno\@ne
+  \ifnum \lst@lineno>\lst@lastline
+      \lst@ifdropinput \lst@LeaveMode \fi
+      \ifx\lst@linerange\@empty
+          \def\lst@next{\lst@EndProcessListing}%
+      \else
+          \lst@interrange
+          \lst@GetLineInterval
+          \def\lst@next{\ltj@lst@supply@jcmd\lst@SkipToFirst}%
+      \fi
+  \else
+      \def\lst@next{\ltj@lst@supply@jcmd\lst@BOLGobble}%
+  \fi\lst@next}
 
 \endinput

@@ -85,6 +85,7 @@ the first line of the listing is not rendered.
 :
 \end{env}
 
+\loggingall
 \begin{LTXexample}[language=TeX]
 え!1あ，い・あ）う（え
 え!2あ
@@ -168,11 +169,12 @@ foo \lstinline[basicstyle=\tt\gtfamily]!あexit 0; #shbar! baz あ
 %\tracingall
 \begin{lstlisting}[commentstyle=\color{green}\bfseries,
   frame=single,language=TeX, escapechar=!, basicstyle=\ttfamily,
-  basewidth={0.5em, 0.5em}]
-1234567890123457890
+  basewidth={0.5em, 0.5em},columns=fixed,doubleletterspace]
+1234567890123456789012345678901234567890
 ai! u e !o
 aiu! \textcolor{blue}{e}!o!\textcolor{blue}{e} !o
 ABあ!\color{blue}あ$a_{ijk}\times\hbox{ほげ}$いうえ!うえ% あいうえおAIg
+1234567890123456789012345678901234567890
 あ!\西暦\today\和暦\today!abc
 \end{lstlisting}
 あいうえお
